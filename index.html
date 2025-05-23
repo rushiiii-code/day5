@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rushi's Tees - Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hover-zoom:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
+    }
+    #cartModal {
+      transition: transform 0.3s ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Navbar -->
+  <header class="bg-white shadow-md sticky top-0 z-10">
+    <div class="max-w-7xl mx-auto flex items-center justify-between p-4">
+      <h1 class="text-2xl font-bold text-blue-600">Rushi's Tees</h1>
+      <nav class="space-x-6">
+        <a href="#" class="hover:underline">Home</a>
+        <a href="#products" class="hover:underline">Products</a>
+        <button onclick="toggleCart()" class="relative hover:underline">Cart (<span id="cart-count">0</span>)</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="bg-blue-600 text-white text-center py-20">
+    <h2 class="text-4xl font-bold">Trendy Tees for Everyone</h2>
+    <p class="mt-2">Explore our unique and stylish T-shirts</p>
+  </section>
+
+  <!-- Products -->
+  <section id="products" class="max-w-7xl mx-auto py-10 px-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+    <!-- Product Cards -->
+    <!-- Repeat this block for each T-shirt -->
+    <script>
+      const products = [
+        { id: 1, name: "Sunset Vibes Tee", price: 20, image: "https://credibletees.com/cdn/shop/files/Copy_of_Copy_of_Biker_White_T-Shirt_Mockup.png?v=1725706716&width=990" },
+        { id: 2, name: "Minimal Lines Tee", price: 22, image: "https://img.freepik.com/premium-vector/vector-vintage-tshirt-design-template_637269-133.jpg?w=2000" },
+        { id: 3, name: "Ocean Breeze Tee", price: 18, image: "https://www.thewalkdeal.com/cdn/shop/products/Alone-NavyBlue.jpg?v=1640675727" },
+        { id: 4, name: "Urban Jungle Tee", price: 24, image: "https://th.bing.com/th/id/OIP.E8L0kkJILrHlgtCGrkT_PAHaHa?cb=iwp2&rs=1&pid=ImgDetMain" },
+        { id: 5, name: "Classic Black Tee", price: 15, image: "https://th.bing.com/th/id/OIP.-k0azWcd2R6KzcjI1W0pIAHaJ1?o=7&cb=iwp2rm=3&rs=1&pid=ImgDetMain" },
+        { id: 6, name: "Neon Glow Tee", price: 25, image: "https://via.placeholder.com/200x200?text=Neon+Glow" },
+      ];
+    </script>
+    <div id="product-list"></div>
+  </section>
+
+  <!-- Cart Modal -->
+  <div id="cartModal" class="fixed top-0 right-0 w-80 h-full bg-white shadow-lg p-4 transform translate-x-full z-20">
+    <h2 class="text-xl font-bold mb-4">Your Cart</h2>
+    <div id="cart-items" class="space-y-2"></div>
+    <p class="font-bold mt-4">Total: $<span id="cart-total">0</span></p>
+    <button class="mt-4 bg-red-500 text-white px-4 py-2 rounded">Checkout</button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white text-center py-4 mt-10 border-t">
+    <p>&copy; 2025 Rushi's Tees</p>
+    <nav class="space-x-4 mt-2">
+      <a href="#" class="text-blue-500 hover:underline">About</a>
+      <a href="#" class="text-blue-500 hover:underline">Contact</a>
+      <a href="#" class="text-blue-500 hover:underline">Terms</a>
+    </nav>
+  </footer>
+
+  <script>
+    const productList = document.getElementById('product-list');
+    const cartItems = document.getElementById('cart-items');
+    const cartCount = document.getElementById('cart-count');
+    const cartTotal = document.getElementById('cart-total');
+    const cart = [];
+
+    products.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'bg-white p-4 rounded-lg shadow-md hover-zoom';
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover rounded">
+        <h3 class="text-lg font-semibold mt-2">${product.name}</h3>
+        <p class="text-blue-600 font-bold">$${product.price}</p>
+        <button onclick="addToCart(${product.id})" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Add to Cart</button>
+      `;
+      productList.appendChild(card);
+    });
+
+    function toggleCart() {
+      const cartModal = document.getElementById('cartModal');
+      if (cartModal.classList.contains('translate-x-full')) {
+        cartModal.classList.remove('translate-x-full');
+      } else {
+        cartModal.classList.add('translate-x-full');
+      }
+    }
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      updateCart();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    function updateCart() {
+      cartItems.innerHTML = '';
+      let total = 0;
+      cart.forEach((item, index) => {
+        total += item.price;
+        const div = document.createElement('div');
+        div.className = 'flex justify-between items-center border-b pb-2';
+        div.innerHTML = `
+          <div>
+            <p>${item.name}</p>
+            <p class="text-sm text-gray-500">$${item.price}</p>
+          </div>
+          <button onclick="removeFromCart(${index})" class="text-red-500 hover:underline">Remove</button>
+        `;
+        cartItems.appendChild(div);
+      });
+      cartCount.innerText = cart.length;
+      cartTotal.innerText = total;
+    }
+  </script>
+</body>
+</html>
